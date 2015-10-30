@@ -45,7 +45,6 @@ RUN yum -y autoremove
 # - remove yum caches
 RUN yum clean all
 
-
 WORKDIR ${HOME}
 CMD ["fluentd"]
 
