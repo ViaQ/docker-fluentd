@@ -1,6 +1,8 @@
 FROM centos:centos7
 MAINTAINER The BitScout Community <community@TBA>
 
+EXPOSE 5140
+
 ENV HOME=/opt/app-root/src \
     PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH \
     RUBY_VERSION=2.0 \
