@@ -1,0 +1,30 @@
+For really simple, stupid testing, first run the elasticsearch container, then
+build the fluentd container.  Then:
+
+  $ mkdir /var/tmp/log
+  $ sudo chcon -Rt svirt_sandbox_file_t /var/tmp/log
+  $ ip addr # find the IP address of docker0 - mine is 172.17.42.1
+  $ uid=`id -u`
+  $ id=`docker run -u $uid -e ES_HOST=172.17.42.1 -v /var/tmp/log:/var/log -d bitscout/fluentd:latest`
+  $ docker logs $id # just to check
+  $ journalctl -xn > /var/tmp/log/messages
+
+Then you should see stuff show up in elasticsearch:
+
+  $ curl http://localhost:9200/_search | python -mjson.tool
+  {
+    "_shards": {
+        "failed": 0,
+        "successful": 5,
+        "total": 5
+    },
+    "hits": {
+        "hits": [
+  ...
+          ],
+        "max_score": 1.0,
+        "total": 9
+    },
+    "timed_out": false,
+    "took": 1
+  }
