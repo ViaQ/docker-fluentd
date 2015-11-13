@@ -1,1 +1,1 @@
-docker run -d -p 5140:5140/udp -u $uid -e ES_HOST=$elasticsearchhost --name $appname $testbindmountopt ${testhostdir}$testcontainerdir $image
+docker run -d -p 5140:5140/udp -u $uid $link_es -e ES_HOST=$elasticsearchhost --name $appname $testbindmountopt ${testhostdir}$testcontainerdir $image
