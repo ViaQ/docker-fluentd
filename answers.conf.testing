@@ -1,0 +1,9 @@
+[general]
+namespace = bitscout-fluentd
+provider = docker
+[bitscout-fluentd]
+elasticsearchhost = 172.17.42.1
+testbindmountopt = -v
+testhostdir = /var/tmp/log:
+testcontainerdir = /var/log
+uid = 1000
