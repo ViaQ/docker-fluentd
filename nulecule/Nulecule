@@ -20,8 +20,11 @@ graph:
         description: "User id to use to run fluentd (hint: use numeric if not root)"
         default: root
       - name: elasticsearchhost
-        description: host/ip addr to use to connect to elasticsearch
-        default: localhost
+        description: host/ip addr to use to connect to elasticsearch - works with link_es below
+        default: bitscout-elasticsearch
+      - name: link_es
+        description: Use --link bitscout-elasticsearch
+        default: "--link bitscout-elasticsearch"
       - name: testbindmountopt
         description: test bind mount option
         default: " "
