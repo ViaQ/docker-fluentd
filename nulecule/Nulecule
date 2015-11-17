@@ -4,7 +4,7 @@ id: bitscout-fluentd-app
 
 metadata:
   name: Fluentd for BitScout
-  appversion: 0.0.1
+  appversion: 0.0.2
   description: BitScout implementation of Fluentd
 
 graph:
@@ -34,6 +34,12 @@ graph:
       - name: testcontainerdir
         description: test containerdir
         default: " "
+      - name: qpidhost
+        description: host/ip addr to use to connect to qpid - works with link_qpid below
+        default: bitscout-qpid-router
+      - name: link_qpid
+        description: Use --link bitscout-qpid-router
+        default: "--link bitscout-qpid-router"
     artifacts:
       docker:
         - file://artifacts/docker/run
