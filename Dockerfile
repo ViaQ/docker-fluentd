@@ -6,7 +6,7 @@ EXPOSE 5140
 ENV HOME=/opt/app-root/src \
     PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH \
     RUBY_VERSION=2.0 \
-    FLUENTD_VERSION=0.12.6 \
+    FLUENTD_VERSION=0.12.17 \
     GEM_HOME=/opt/app-root/src
 
 RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
