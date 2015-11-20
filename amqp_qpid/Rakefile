@@ -1,0 +1,16 @@
+# encoding: utf-8
+
+task default: %w[test]
+
+require 'rake/testtask'
+Rake::TestTask.new(:test) do |test|
+   test.libs << 'lib' << 'test'
+   test.pattern = 'test/**/test_*.rb'
+   test.verbose = true
+end
+
+# TODO aconway 2015-11-20: bundler, jewler - deps & gem.
+# TODO aconway 2015-11-20: rdoc.
+# TODO aconway 2015-11-20: rcov.
+
+
