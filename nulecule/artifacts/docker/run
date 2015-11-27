@@ -1,1 +1,0 @@
-docker run -d -p 5140:5140/udp -u $uid $link_es $link_qpid -e QP_HOST=$qpidhost -e ES_HOST=$elasticsearchhost --name $appname $testbindmountopt ${testhostdir}$testcontainerdir $image
