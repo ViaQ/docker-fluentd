@@ -1,13 +1,14 @@
 FROM centos:centos7
 MAINTAINER The BitScout Community <community@TBA>
 
-EXPOSE 5140
+EXPOSE 10514
 
 ENV HOME=/opt/app-root/src \
     PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH \
     RUBY_VERSION=2.0 \
     FLUENTD_VERSION=0.12.17 \
-    GEM_HOME=/opt/app-root/src
+    GEM_HOME=/opt/app-root/src \
+    SYSLOG_LISTEN_PORT=10514
 
 RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
