@@ -1,78 +1,81 @@
-# TODO aconway 2015-11-24: copyright
-
-# FIXME aconway 2015-11-24:
-# - error handling: bad config, bad url, connection failures etc.
-# - security support: SSL, SASL?
-
-# FIXME aconway 2015-11-25: the GVL is locked during the process call so reactor
-# is busy-looping with timeout 0 which is burning CPU. Need to fix this.
+# TODO aconway 2015-12-10: copyright
 
 require 'qpid_proton'
+# TODO: the stuff in qpid_proton_extra will be part of qpid_proton in a future release.
+require_relative './qpid_proton_extra'
 
 module Fluent
   class AMQPInput < Input
     NAME = 'amqp_qpid'
     Fluent::Plugin.register_input(NAME, self)
 
-    config_param :tag, :string, :default => NAME
-    config_param :url, :string, :default => "amqp://guest:guest@localhost:5672/fluent"
+    config_param :url, :string
+    config_param :tag, :string
+    config_param :reconnect_min, :float, :default => 0.1
+    config_param :reconnect_max, :float, :default => 3
+
+    def configure(conf)
+      super
+      raise ConfigError, "#{NAME}: 'tag' is required" unless @tag
+      raise ConfigError, "#{NAME}: 'url' is required" unless @url
+      begin
+        @url = Qpid::Proton::URL.new @url
+      rescue Exception => e
+        raise ConfigError, "#{NAME}: 'url' is invalid: #{e}"
+      end
+      @backoff = Qpid::Proton::Reactor::Backoff.new @reconnect_min, @reconnect_max
+    end
+
+    def start
+      super
+      log.debug "#{NAME}: connecting on #{@url}"
+      @thread = Thread.new do
+        while !@stop
+          begin
+            s = TCPSocket.new @url.host, @url.port
+            h = Handler.new plugin_id, @url, @tag
+            @driver = Qpid::Proton::ConnectionDriver.new(s, h)
+            @driver.run
+          rescue => e
+          end
+          sleep @backoff.next
+        end
+      end
+    end
+
+    def shutdown
+      super
+      @stop = true
+      @driver.io.close
+      @thread.join
+    rescue
+    end
 
     class Handler < Qpid::Proton::Handler::MessagingHandler
+
       def initialize(id, url, tag)
         super()
-        @container = Qpid::Proton::Reactor::Container.new([self])
-        @container.container_id = id if id
-        @tag = tag
-        @url = url
-
-        @lock = Mutex.new
-        @running = true
+        @id, @url, @tag = id, url, tag
       end
 
-      def on_start(event)
-        @receiver = event.container.create_receiver(@url)
+      attr_reader :engine
+
+      def on_start event
+        event.connection.container = @id
+        event.connection.open   # Open as client.
+        @receiver = event.connection.open_session().open_receiver(@url.path)
       end
 
-      def on_message(event)
+      def on_message event
         m = event.message
         tag = (m.address and m.address.size > 0) ? "#{@tag}.#{m.address}" : @tag
         Engine.emit(tag, Time.new.to_i, m.body)
       end
 
-      def run
-        @container.start
-        while @lock.synchronize { @running }
-          @container.process
-        end
-        @receiver.connection.close
-        @container.process      # Process final connection close events.
-      ensure
-        @container.stop
-      end
-
-      def shutdown
-        @lock.synchronize {
-          @running = false
-          @container.wakeup
-        }
+      def on_disconnect event
+        puts "FIMXE #{NAME}: disconnected, re-connecting"
       end
     end
-
-    def configure(conf)
-      super
-      raise ConfigError, "'url' must be specified" unless @url
-    end
-
-    def start
-      @handler = Handler.new plugin_id, @url, @tag
-      @thread = Thread.new { @handler.run }
-    end
-
-    def shutdown
-      @handler.shutdown
-      @thread.join
-      super
-    end
-
-  end # class AMQPInput
+  end
 end
+
