@@ -22,12 +22,16 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 #      dependencies
 #    - yum autoremove
 #    - remove yum caches
-RUN yum update -y --setopt=tsflags=nodocs \
+RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
+    yum update -y --setopt=tsflags=nodocs \
     && \
     yum install -y --setopt=tsflags=nodocs \
         ruby \
     && \
     mkdir -p ${HOME} \
+    && \
+    yum install -y --setopt=tsflags=nodocs \
+        python-qpid-proton \
     && \
     yum install -y --setopt=tsflags=nodocs --setopt=history_record=yes \
         gcc-c++ \
@@ -52,7 +56,9 @@ RUN yum update -y --setopt=tsflags=nodocs \
 COPY fluent.conf /etc/fluent/fluent.conf
 RUN  mkdir /etc/fluent/config.d
 COPY config.d/*.conf /etc/fluent/config.d/
+COPY simple_recv.py /opt/app-root/bin/
 
 WORKDIR ${HOME}
 CMD ["fluentd"]
+#CMD ["fluentd", "-vv"]
 
