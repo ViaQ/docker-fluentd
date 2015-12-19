@@ -8,7 +8,8 @@ ENV HOME=/opt/app-root/src \
     RUBY_VERSION=2.0 \
     FLUENTD_VERSION=0.12.17 \
     GEM_HOME=/opt/app-root/src \
-    SYSLOG_LISTEN_PORT=10514
+    SYSLOG_LISTEN_PORT=10514 \
+    RUBYLIB=/opt/app-root/src/amqp_qpid/lib:/usr/local/lib64/proton/bindings/ruby
 
 RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
@@ -25,24 +26,26 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
     yum update -y --setopt=tsflags=nodocs \
     && \
+    mkdir -p ${HOME}/amqp_qpid \
+    && \
     yum install -y --setopt=tsflags=nodocs \
         ruby \
-    && \
-    mkdir -p ${HOME} \
     && \
     yum install -y --setopt=tsflags=nodocs \
         python-qpid-proton \
     && \
     yum install -y --setopt=tsflags=nodocs --setopt=history_record=yes \
-        gcc-c++ \
-        ruby-devel \
-        libcurl-devel \
-        make \
+        gcc-c++ ruby-devel libcurl-devel make cmake swig \
     && \
     gem install \
         fluentd \
         fluent-plugin-elasticsearch \
         fluent-plugin-kubernetes_metadata_filter \
+        rspec simplecov \
+    && \
+    pushd ${HOME} && \
+    curl http://archive.apache.org/dist/qpid/proton/0.10/qpid-proton-0.10.tar.gz | tar xfz - && \
+    cd qpid-proton-0.10 && cmake . && make install \
     && \
     yum -y history undo last \
     && \
@@ -57,6 +60,7 @@ COPY fluent.conf /etc/fluent/fluent.conf
 RUN  mkdir /etc/fluent/config.d
 COPY config.d/*.conf /etc/fluent/config.d/
 COPY simple_recv.py /opt/app-root/bin/
+COPY amqp_qpid/ ${HOME}/amqp_qpid/
 
 WORKDIR ${HOME}
 CMD ["fluentd"]
