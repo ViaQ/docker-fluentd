@@ -7,12 +7,19 @@ require_relative './qpid_proton_extra'
 module Fluent
   class AMQPInput < Input
     NAME = 'amqp_qpid'
-    Fluent::Plugin.register_input(NAME, self)
+    Plugin.register_input(NAME, self)
+
+    def initialize
+      super
+      require 'fluent/parser'
+    end
 
     config_param :url, :string
     config_param :tag, :string
     config_param :reconnect_min, :float, :default => 0.1
     config_param :reconnect_max, :float, :default => 3
+    desc 'The format of the payload.'
+    config_param :format, :string
 
     def configure(conf)
       super
@@ -24,6 +31,8 @@ module Fluent
         raise ConfigError, "#{NAME}: 'url' is invalid: #{e}"
       end
       @backoff = Qpid::Proton::Reactor::Backoff.new @reconnect_min, @reconnect_max
+      @parser = Plugin.new_parser(@format)
+      @parser.configure(conf)
     end
 
     def start
@@ -33,7 +42,7 @@ module Fluent
         while !@stop
           begin
             s = TCPSocket.new @url.host, @url.port
-            h = Handler.new plugin_id, @url, @tag
+            h = Handler.new plugin_id, @url, @tag, @parser, @router
             @driver = Qpid::Proton::ConnectionDriver.new(s, h)
             @driver.run
           rescue => e
@@ -53,9 +62,9 @@ module Fluent
 
     class Handler < Qpid::Proton::Handler::MessagingHandler
 
-      def initialize(id, url, tag)
+      def initialize(id, url, tag, parser, router)
         super()
-        @id, @url, @tag = id, url, tag
+        @id, @url, @tag, @parser, @router = id, url, tag, parser, router
       end
 
       attr_reader :engine
@@ -69,7 +78,9 @@ module Fluent
       def on_message event
         m = event.message
         tag = (m.address and m.address.size > 0) ? "#{@tag}.#{m.address}" : @tag
-        Engine.emit(tag, Time.new.to_i, m.body)
+        @parser.parse(m.body) { |time, record|
+          @router.emit(tag, time, record)
+        }
       end
 
       def on_disconnect event
