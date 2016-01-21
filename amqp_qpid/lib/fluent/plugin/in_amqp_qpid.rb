@@ -77,9 +77,13 @@ module Fluent
 
       def on_message event
         m = event.message
+#        STDERR.puts "in_amqp received message #{m.body.class} #{m.body} #{@parser.class} #{@parser}"
         tag = (m.address and m.address.size > 0) ? "#{@tag}.#{m.address}" : @tag
-        @parser.parse(m.body) { |time, record|
-          @router.emit(tag, time, record)
+        m.body.each { |rawtext|
+          @parser.parse(rawtext) { |time, record|
+#            STDERR.puts "in_amqp emitting #{tag} #{time} #{record}"
+            @router.emit(tag, time, record)
+          }
         }
       end
 
