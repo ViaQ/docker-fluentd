@@ -1,5 +1,5 @@
 FROM centos:centos7
-MAINTAINER The BitScout Community <community@TBA>
+MAINTAINER The ViaQ Community <community@TBA>
 
 EXPOSE 10514
 
