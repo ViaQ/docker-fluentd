@@ -5,7 +5,7 @@ build the fluentd container.  Then:
   $ sudo chcon -Rt svirt_sandbox_file_t /var/tmp/log
   $ ip addr # find the IP address of docker0 - mine is 172.17.42.1
   $ uid=`id -u`
-  $ id=`docker run -u $uid -e ES_HOST=172.17.42.1 -v /var/tmp/log:/var/log -d bitscout/fluentd:latest`
+  $ id=`docker run -u $uid -e ES_HOST=172.17.42.1 -v /var/tmp/log:/var/log -d viaq/fluentd:latest`
   $ docker logs $id # just to check
   $ journalctl -xn > /var/tmp/log/messages
 
