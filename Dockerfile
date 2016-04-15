@@ -38,6 +38,7 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
         fluentd \
         fluent-plugin-elasticsearch \
         fluent-plugin-kubernetes_metadata_filter \
+        fluent-plugin-systemd systemd-journal \
         rspec simplecov \
     && \
     yum -y history undo last \
