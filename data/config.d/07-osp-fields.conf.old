@@ -1,0 +1,26 @@
+<label @FWD>
+  <filter {nova.**,neutron.**,keystone.**,glance.**,cinder.**,heat.**,ceilometer.**,sahara.**,trove.**,ironic.**}>
+    @type record_transformer
+    enable_ruby
+    auto_typecast true
+    <record>
+      openstack {"instance": "${instance}", "context": "${context}", "class": "${class}"}
+    </record>
+    remove_keys normalizer
+  </filter>
+  <filter {nova.**,neutron.**,keystone.**,glance.**,cinder.**,heat.**,ceilometer.**,sahara.**,trove.**,ironic.**}>
+    @type stdout
+  </filter>
+</label>
+<label @FWD>
+<filter **>
+    @type record_transformer
+    enable_ruby
+    auto_typecast true
+    <record>
+#      openstack {"instance": "${instance}", "context": "${context}", "class": "${class}"}
+      internal_tag ${tag}
+    </record>
+#    remove_keys normalizer
+  </filter>
+</label>

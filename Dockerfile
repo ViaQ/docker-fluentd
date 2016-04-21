@@ -37,25 +37,31 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
     gem install \
         fluentd \
         fluent-plugin-elasticsearch \
-        fluent-plugin-kubernetes_metadata_filter \
         fluent-plugin-systemd systemd-journal \
+#        specific_install \
         rspec simplecov \
+#    && \
+#    gem specific_install https://github.com/t0ffel/fluent-plugin-rewrite-tag-filter.git \
     && \
     yum -y history undo last \
     && \
     yum -y autoremove \
     && \
     yum clean all
+
+VOLUME /data
 #
 # Install the base configuration file and create the directory for "dynamic"
 # configuration files.
 #
-COPY fluent.conf /etc/fluent/fluent.conf
-RUN  mkdir /etc/fluent/config.d
-COPY config.d/*.conf /etc/fluent/config.d/
-COPY amqp_qpid/ ${HOME}/amqp_qpid/
+#COPY fluent.conf /etc/fluent/fluent.conf
+RUN  mkdir -p /etc/fluent/config.d
+#COPY config.d/*.conf /etc/fluent/config.d/
+#COPY amqp_qpid/ ${HOME}/amqp_qpid/
 
 WORKDIR ${HOME}
-CMD ["fluentd"]
+ADD run.sh /usr/sbin/
+CMD /usr/sbin/run.sh
+
 #CMD ["fluentd", "-vv"]
 
