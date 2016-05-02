@@ -38,6 +38,8 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
         fluentd \
         fluent-plugin-elasticsearch \
         fluent-plugin-systemd systemd-journal \
+        fluent-plugin-parser \
+        fluent-plugin-grok-parser \
 #        specific_install \
         rspec simplecov \
 #    && \
