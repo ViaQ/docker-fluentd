@@ -1,0 +1,5 @@
+OSLO_LOG_LEVEL (?<level>AUDIT|CRITICAL|DEBUG|INFO|TRACE|WARNING|ERROR)
+OSLO_BASE         %{TIMESTAMP_ISO8601:timestamp}%{SPACE}%{NUMBER:pid}?%{SPACE}?%{OSLO_LOG_LEVEL}%{SPACE}\[?\b%{NOTSPACE:class}\b\]?%{SPACE}?%{GREEDYDATA:message}?
+OSLO_WITHCONTEXT  %{TIMESTAMP_ISO8601:timestamp}%{SPACE}%{NUMBER:pid}?%{SPACE}?%{OSLO_LOG_LEVEL}%{SPACE}\[?\b%{NOTSPACE:class}\b\]?%{SPACE}?\[(?<context>%{DATA})\]%{SPACE}?%{GREEDYDATA:message}?
+OSLO_WITHINSTANCE %{TIMESTAMP_ISO8601:timestamp}%{SPACE}%{NUMBER:pid}?%{SPACE}?%{OSLO_LOG_LEVEL}%{SPACE}\[?\b%{NOTSPACE:class}\b\]?%{SPACE}?\[%{DATA:context}\]%{SPACE}?\[instance: (?<instance>%{DATA})\]%{SPACE}?%{GREEDYDATA:message}?
+
