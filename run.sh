@@ -32,6 +32,7 @@ for file in /etc/fluent/fluent.conf /etc/fluent/config.d/*.conf /etc/fluent/conf
         -e "s/%SYSLOG_LISTEN_PORT%/$SYSLOG_LISTEN_PORT/g" \
         -e "s/%LOGSTASH_PREFIX%/$LOGSTASH_PREFIX/g" \
         -e "s/%NORMALIZER_NAME%/$NORMALIZER_NAME/g" -e "s/%NORMALIZER_IP%/$NORMALIZER_IP/g" \
+        -e "s/%NORMALIZER_HOSTNAME%/$NORMALIZER_HOSTNAME/g" \
         "$file"
 done
 
