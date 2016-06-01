@@ -6,7 +6,7 @@ EXPOSE 10514
 ENV HOME=/opt/app-root/src \
     PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH \
     RUBY_VERSION=2.0 \
-    FLUENTD_VERSION=0.12.17 \
+    FLUENTD_VERSION=0.12.26 \
     GEM_HOME=/opt/app-root/src \
     SYSLOG_LISTEN_PORT=10514 \
     RUBYLIB=/opt/app-root/src/amqp_qpid/lib:/usr/local/lib64/proton/bindings/ruby
@@ -38,7 +38,7 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
         gcc-c++ ruby-devel libcurl-devel make cmake swig \
     && \
     gem install \
-        fluentd \
+        fluentd:${FLUENTD_VERSION} \
         fluent-plugin-elasticsearch \
         fluent-plugin-kubernetes_metadata_filter \
         rspec simplecov \
