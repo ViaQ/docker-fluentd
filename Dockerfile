@@ -2,6 +2,7 @@ FROM centos:centos7
 MAINTAINER The ViaQ Community <community@TBA>
 
 EXPOSE 10514
+EXPOSE 24220
 
 ENV HOME=/opt/app-root/src \
     PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH \
@@ -52,6 +53,10 @@ VOLUME /data
 
 RUN  mkdir -p /etc/fluent/config.d
 COPY amqp_qpid/ ${HOME}/amqp_qpid/
+
+# Uncomment to install Multiprocess Input Plugin
+# see http://docs.fluentd.org/articles/in_multiprocess
+# RUN  fluent-gem install fluent-plugin-multiprocess
 
 WORKDIR ${HOME}
 ADD run.sh /usr/sbin/
