@@ -2,7 +2,7 @@ FROM centos:centos7
 MAINTAINER The ViaQ Community <community@TBA>
 
 EXPOSE 10514
-EXPOSE 24220
+EXPOSE 24224
 
 ENV HOME=/opt/app-root/src \
     PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH \
@@ -10,6 +10,7 @@ ENV HOME=/opt/app-root/src \
     FLUENTD_VERSION=0.12.26 \
     GEM_HOME=/opt/app-root/src \
     SYSLOG_LISTEN_PORT=10514 \
+    FLUENTD_FORWARD_INPUT_PORT=24224 \
     RUBYLIB=/opt/app-root/src/amqp_qpid/lib
 
 RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
@@ -51,7 +52,10 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
 
 VOLUME /data
 
-RUN  mkdir -p /etc/fluent/config.d
+RUN  mkdir -p /etc/fluent/configs.d ${HOME}/forwarder-example
+COPY data/ ${HOME}/forwarder-example/
+COPY fluent.conf /etc/fluent/
+COPY configs.d/ /etc/fluent/configs.d/
 COPY amqp_qpid/ ${HOME}/amqp_qpid/
 
 # Uncomment to install Multiprocess Input Plugin
@@ -59,7 +63,5 @@ COPY amqp_qpid/ ${HOME}/amqp_qpid/
 # RUN  fluent-gem install fluent-plugin-multiprocess
 
 WORKDIR ${HOME}
-ADD run.sh /usr/sbin/
-CMD /usr/sbin/run.sh
-
-
+ADD run.sh ${HOME}/
+CMD ${HOME}/run.sh
