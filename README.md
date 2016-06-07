@@ -1,4 +1,4 @@
-# docker-fluentd
+# docker-fluentd [![Build Status](https://travis-ci.org/ViaQ/docker-fluentd.svg?branch=master)](https://travis-ci.org/ViaQ/docker-fluentd)
 ViaQ Fluentd docker container - implements the aggregator/formatter
 
 ## Environmental variables:
