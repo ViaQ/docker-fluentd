@@ -34,6 +34,14 @@ export ENABLE_AMQP_INPUT=${ENABLE_AMQP_INPUT:-true}
 # FLUENTD_AMQP_INPUT_URL - default is amqp://viaq-qpid-router:5672/viaq
 # FLUENTD_AMQP_INPUT_LOG_LEVEL - default is FLUENTD_LOG_LEVEL or warn
 export ENABLE_STDOUT=${ENABLE_STDOUT:-false}
+export ENABLE_MONITOR=${ENABLE_MONITOR:-true}
+# other params available for monitor
+# MONITOR_PORT - default 24220
+# MONITOR_BIND_ADDR - default is 0.0.0.0
+export ENABLE_DEBUG=${ENABLE_DEBUG:-false}
+# other params available for debug
+# DEBUG_PORT - default 24230
+# DEBUG_BIND_ADDR - default is 127.0.0.1
 
 export FLUENTD_LOG_LEVEL=${FLUENTD_LOG_LEVEL:-warn}
 export DEBUG_FLUENTD=${DEBUG_FLUENTD:-false}
@@ -65,7 +73,9 @@ else
         $ENABLE_TAIL /etc/fluent/configs.d/input/var-log-messages.conf \
         $ENABLE_AMQP_INPUT /etc/fluent/configs.d/input/amqp.conf \
         $ENABLE_ES /etc/fluent/configs.d/output/elasticsearch.conf \
-        $ENABLE_STDOUT /etc/fluent/configs.d/output/stdout.conf
+        $ENABLE_STDOUT /etc/fluent/configs.d/output/stdout.conf \
+        $ENABLE_MONITOR /etc/fluent/configs.d/input/monitor.conf \
+        $ENABLE_DEBUG /etc/fluent/configs.d/input/debug.conf
     while [ -n "${1:-}" ] ; do
         t_or_f=$1 ; shift ; fn=$1
         if ! $t_or_f && test -f $fn ; then
