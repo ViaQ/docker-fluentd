@@ -65,7 +65,7 @@ In case `fluent.conf` exists, the default `config.d/*.conf` is removed and not u
 
 Using plain docker, default arguments::
 
-    # docker run -d -p 10514:10514/udp -p 24224:24224/udp \
+    # docker run -d -p 10514:10514/udp -p 24224:24224/udp -p 24220:24220 \
       -e FLUENTD_LOG_LEVEL=info --name viaq-fluentd viaq/fluentd
 
 Using specified syslog listen host, fluentd config dir, normalizer configuration::

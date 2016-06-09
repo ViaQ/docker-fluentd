@@ -6,12 +6,12 @@ services:
   - docker
 
 before_install:
-- docker build -t viaq/fluentd-latest .
+- sudo apt-get install -y curl
+- sudo apt-get install -y jq
+- docker build -t viaq/fluentd .
 - docker images 
 - docker ps -a
-- docker create viaq/fluentd-latest
-- docker ps -a
-- docker start `docker ps -aq`
+- docker run -d -p 5141:5141/udp -p 24224:24224/udp -p 24220:24220 -e FLUENTD_LOG_LEVEL=info --name viaq-fluentd viaq/fluentd
 - docker ps -a
 
 script: ./travis_scripts/basic_test.sh

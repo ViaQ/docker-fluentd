@@ -5,7 +5,7 @@
 set -ev
 
 # Give the container some room to start up
-sleep 10
+sleep 5 
 docker ps -a
 
 CONTAINER_ID=$(docker ps -aq)
@@ -16,3 +16,5 @@ if [ "$STATUS" == "false" ]; then
   docker logs $CONTAINER_ID
   exit 2
 fi
+
+curl localhost:24220/api/plugins.json | jq
