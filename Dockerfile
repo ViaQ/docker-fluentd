@@ -1,8 +1,14 @@
 FROM centos:centos7
 MAINTAINER The ViaQ Community <community@TBA>
 
+# default syslog listener port
 EXPOSE 10514
+# monitor agent port
+EXPOSE 24220
+# default forwarder port
 EXPOSE 24224
+# default debug port
+EXPOSE 24230
 
 ENV HOME=/opt/app-root/src \
     PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH \
@@ -10,7 +16,6 @@ ENV HOME=/opt/app-root/src \
     FLUENTD_VERSION=0.12.26 \
     GEM_HOME=/opt/app-root/src \
     SYSLOG_LISTEN_PORT=10514 \
-    FLUENTD_FORWARD_INPUT_PORT=24224 \
     RUBYLIB=/opt/app-root/src/amqp_qpid/lib
 
 RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7

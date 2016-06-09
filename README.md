@@ -38,6 +38,16 @@ AMQP input
 Stdout output (for debugging)
 * `ENABLE_STDOUT` - default `false`
 
+Monitor http://docs.fluentd.org/articles/monitoring
+* `ENABLE_MONITOR` - Defaults to `true`.
+* `MONITOR_PORT` - default is `24220`
+* `MONITOR_BIND_ADDR` - default is `0.0.0.0`
+
+Debug http://docs.fluentd.org/articles/monitoring
+* `ENABLE_DEBUG` - Defaults to `false`.
+* `DEBUG_PORT` - default is `24230`
+* `DEBUG_BIND_ADDR` - default is `127.0.0.1`
+
 If you want to use fluentd with or as a normalizer, you must define the following:
 
 * `NORMALIZER_NAME` - The string name of the normalize reported in the ES record as `"pipeline_metadata":{"normalizer":{"name": "NORMALIZER_NAME"}}`.  This is a descriptive string used for searching and filtering.
