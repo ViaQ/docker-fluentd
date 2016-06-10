@@ -47,13 +47,17 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
         fluent-plugin-systemd systemd-journal \
         fluent-plugin-parser \
         fluent-plugin-grok-parser \
-        rspec simplecov \
+        rspec simplecov  --no-document \
     && \
     yum -y history undo last \
     && \
     yum -y autoremove \
     && \
     yum clean all
+
+# Install Ruby 2.2
+RUN yum -y install centos-release-scl && \
+    yum -y install rh-ruby22 
 
 VOLUME /data
 

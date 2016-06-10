@@ -94,4 +94,7 @@ find /etc/fluent -name \*.conf -exec sed -i \
      -e "s/%NORMALIZER_HOSTNAME%/$NORMALIZER_HOSTNAME/g" \
      {} \;
 
+# Switch to Ruby 2.2
+scl enable rh-ruby22 bash
+
 fluentd ${FLUENTD_ARGS}
