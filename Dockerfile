@@ -16,7 +16,11 @@ ENV HOME=/opt/app-root/src \
     FLUENTD_VERSION=0.12.26 \
     GEM_HOME=/opt/app-root/src \
     SYSLOG_LISTEN_PORT=10514 \
-    RUBYLIB=/opt/app-root/src/amqp_qpid/lib
+    RUBYLIB=/opt/app-root/src/amqp_qpid/lib \
+    RUBYVERREPOPKGS="centos-release-scl" \
+    RUBYVERPKGS="rh-ruby22 scl-utils"
+
+# use docker ... -e RUBY_SCL_VER=rh-ruby22 to use ruby 2.2
 
 RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
@@ -30,13 +34,13 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 #      dependencies
 #    - yum autoremove
 #    - remove yum caches
-RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
+RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm ${RUBYVERREPOPKGS} && \
     yum update -y --setopt=tsflags=nodocs \
     && \
     mkdir -p ${HOME}/amqp_qpid \
     && \
     yum install -y --setopt=tsflags=nodocs \
-        ruby rubygem-qpid_proton \
+        ruby rubygem-qpid_proton ${RUBYVERPKGS} \
     && \
     yum install -y --setopt=tsflags=nodocs --setopt=history_record=yes \
         gcc-c++ ruby-devel libcurl-devel make cmake swig \
@@ -47,7 +51,7 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
         fluent-plugin-systemd systemd-journal \
         fluent-plugin-parser \
         fluent-plugin-grok-parser \
-        rspec simplecov \
+        rspec simplecov --no-document \
     && \
     yum -y history undo last \
     && \
