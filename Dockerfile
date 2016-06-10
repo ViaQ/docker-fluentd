@@ -47,7 +47,7 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
         fluent-plugin-systemd systemd-journal \
         fluent-plugin-parser \
         fluent-plugin-grok-parser \
-        rspec simplecov \
+        rspec simplecov  --no-document \
     && \
     yum -y history undo last \
     && \
