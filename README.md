@@ -55,7 +55,7 @@ If you want to use fluentd with or as a normalizer, you must define the followin
 * `NORMALIZER_HOSTNAME` - hostname of the normalizer node/machine.  This is reported in the ES record as `"pipeline_metadata":{"normalizer":{"hostname": "NORMALIZER_HOSTNAME"}}`.
 
 Ruby version
-* `RUBY_SCL_VER` - Is used to specify Ruby version from software collection. Currently supports `rh-ruby22`. 
+* `RUBY_SCL_VER` - Is used to specify Ruby version from software collection. Currently supports `rh-ruby22`. By default Ruby from base Docker image is used (i.e. `centos7` comes with Ruby `2.0.0p598`).
 
 ## External Fluentd config
 In order to add own Fluentd configuration file please add the configuration files to a local directory and map in to `/data` docker volume.
