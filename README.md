@@ -54,6 +54,9 @@ If you want to use fluentd with or as a normalizer, you must define the followin
 * `NORMALIZER_IP` - not currently used
 * `NORMALIZER_HOSTNAME` - hostname of the normalizer node/machine.  This is reported in the ES record as `"pipeline_metadata":{"normalizer":{"hostname": "NORMALIZER_HOSTNAME"}}`.
 
+Ruby version
+* `RUBY_SCL_VER` - Is used to specify Ruby version from software collection. Currently supports `rh-ruby22`. 
+
 ## External Fluentd config
 In order to add own Fluentd configuration file please add the configuration files to a local directory and map in to `/data` docker volume.
 The following files are taken form the local directory:
@@ -63,12 +66,16 @@ In case `fluent.conf` exists, the default `config.d/*.conf` is removed and not u
 
 ## Running:
 
-Using plain docker, default arguments::
+Using plain docker, default arguments:
 
     # docker run -d -p 10514:10514/udp -p 24224:24224/udp -p 24220:24220 \
       -e FLUENTD_LOG_LEVEL=info --name viaq-fluentd viaq/fluentd
 
-Using specified syslog listen host, fluentd config dir, normalizer configuration::
+Use Ruby 2.2 from software collection:
+
+    # docker run -d -e RUBY_SCL_VER=rh-ruby22 ... --name viaq-fluentd viaq/fluentd
+
+Using specified syslog listen host, fluentd config dir, normalizer configuration:
 
     # docker run -d -p $syslog_listen_port:$syslog_listen_port/tcp \
       -p $syslog_listen_port:$syslog_listen_port/udp -v $local_dir:/data \
