@@ -34,6 +34,7 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 #      dependencies
 #    - yum autoremove
 #    - remove yum caches
+# autoremove removes hostname, so have to add it back :P
 RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm ${RUBYVERREPOPKGS} && \
     yum update -y --setopt=tsflags=nodocs \
     && \
@@ -49,6 +50,7 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
         fluentd:${FLUENTD_VERSION} \
         fluent-plugin-elasticsearch \
         fluent-plugin-systemd systemd-journal \
+        fluent-plugin-rewrite-tag-filter \
         fluent-plugin-parser \
         fluent-plugin-grok-parser \
         rspec simplecov --no-document \
@@ -56,6 +58,8 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
     yum -y history undo last \
     && \
     yum -y autoremove \
+    && \
+    yum -y install hostname \
     && \
     yum clean all
 
