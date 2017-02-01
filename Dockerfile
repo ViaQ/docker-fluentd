@@ -13,7 +13,7 @@ EXPOSE 24230
 ENV HOME=/opt/app-root/src \
     PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH \
     RUBY_VERSION=2.0 \
-    FLUENTD_VERSION=0.12.26 \
+    FLUENTD_VERSION=0.12.31 \
     GEM_HOME=/opt/app-root/src \
     SYSLOG_LISTEN_PORT=10514 \
     RUBYLIB=/opt/app-root/src/amqp_qpid/lib \
@@ -46,14 +46,15 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
     yum install -y --setopt=tsflags=nodocs --setopt=history_record=yes \
         gcc-c++ ruby-devel libcurl-devel make cmake swig \
     && \
-    gem install \
+    gem install -N --conservative --minimal-deps \
         fluentd:${FLUENTD_VERSION} \
+        'activesupport:<5' \
         fluent-plugin-elasticsearch \
-        fluent-plugin-systemd systemd-journal \
+        'fluent-plugin-systemd:<0.1.0' systemd-journal \
         fluent-plugin-rewrite-tag-filter \
         fluent-plugin-parser \
-        fluent-plugin-grok-parser \
-        rspec simplecov --no-document \
+        'fluent-plugin-grok-parser:<0.14' \
+        fluent-plugin-kubernetes_metadata_filter \
     && \
     yum -y history undo last \
     && \
