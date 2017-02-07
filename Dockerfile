@@ -71,6 +71,7 @@ COPY data/ ${HOME}/forwarder-example/
 COPY fluent.conf /etc/fluent/
 COPY configs.d/ /etc/fluent/configs.d/
 COPY amqp_qpid/ ${HOME}/amqp_qpid/
+ADD filter-common-data-model.rb /etc/fluent/plugin/
 
 # Uncomment to install Multiprocess Input Plugin
 # see http://docs.fluentd.org/articles/in_multiprocess
