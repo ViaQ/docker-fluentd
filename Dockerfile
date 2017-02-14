@@ -55,6 +55,10 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
         fluent-plugin-parser \
         'fluent-plugin-grok-parser:<0.14' \
         fluent-plugin-kubernetes_metadata_filter \
+        fluent-plugin-secure-forward \
+        fluent-plugin-add \
+        fluent-plugin-viaq_data_model \
+        fluent-plugin-collectd-nest \
     && \
     yum -y history undo last \
     && \
@@ -71,6 +75,8 @@ COPY data/ ${HOME}/forwarder-example/
 COPY fluent.conf /etc/fluent/
 COPY configs.d/ /etc/fluent/configs.d/
 COPY amqp_qpid/ ${HOME}/amqp_qpid/
+#ADD out_elasticsearch_dynamic.rb /opt/app-root/src/gems/fluent-plugin-elasticsearch-1.9.2/lib/fluent/plugin/out_elasticsearch_dynamic.rb
+#ADD faraday.rb /opt/app-root/src/gems/elasticsearch-transport-1.0.18/lib/elasticsearch/transport/transport/http/faraday.rb
 
 # Uncomment to install Multiprocess Input Plugin
 # see http://docs.fluentd.org/articles/in_multiprocess
