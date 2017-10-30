@@ -1,4 +1,4 @@
-FROM centos:centos7
+FROM centos/ruby-24-centos7:latest
 MAINTAINER The ViaQ Community <community@TBA>
 
 # default syslog listener port
@@ -9,19 +9,22 @@ EXPOSE 24220
 EXPOSE 24224
 # default debug port
 EXPOSE 24230
+# in_tcp port
+EXPOSE 20514
 
 ENV HOME=/opt/app-root/src \
     PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH \
-    RUBY_VERSION=2.0 \
-    FLUENTD_VERSION=0.12.31 \
+    RUBY_VERSION=2.4 \
+    FLUENTD_VERSION=0.12.39 \
     GEM_HOME=/opt/app-root/src \
     SYSLOG_LISTEN_PORT=10514 \
-    RUBYLIB=/opt/app-root/src/amqp_qpid/lib \
-    RUBYVERREPOPKGS="centos-release-scl" \
-    RUBYVERPKGS="rh-ruby22 scl-utils"
+    RUBYLIB=/opt/app-root/src/amqp_qpid/lib
+
+ARG SCL_VERSION=rh-ruby24
 
 # use docker ... -e RUBY_SCL_VER=rh-ruby22 to use ruby 2.2
 
+USER 0
 RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 # 1. Update packages
@@ -35,20 +38,19 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 #    - yum autoremove
 #    - remove yum caches
 # autoremove removes hostname, so have to add it back :P
-RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm ${RUBYVERREPOPKGS} && \
+RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
     yum update -y --setopt=tsflags=nodocs \
     && \
     mkdir -p ${HOME}/amqp_qpid \
     && \
     yum install -y --setopt=tsflags=nodocs \
-        ruby rubygem-qpid_proton ${RUBYVERPKGS} \
+        rubygem-qpid_proton \
     && \
     yum install -y --setopt=tsflags=nodocs --setopt=history_record=yes \
-        gcc-c++ ruby-devel libcurl-devel make cmake swig \
+        cmake swig iproute bc \
     && \
-    gem install -N --conservative --minimal-deps \
+    scl enable ${SCL_VERSION} -- gem install -N --conservative --minimal-deps --no-ri \
         fluentd:${FLUENTD_VERSION} \
-        'activesupport:<5' \
         fluent-plugin-elasticsearch \
         'fluent-plugin-systemd:<0.1.0' systemd-journal \
         fluent-plugin-rewrite-tag-filter \
