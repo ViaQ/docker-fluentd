@@ -13,7 +13,7 @@ EXPOSE 24230
 ENV HOME=/opt/app-root/src \
     PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH \
     RUBY_VERSION=2.0 \
-    FLUENTD_VERSION=0.12.31 \
+    FLUENTD_VERSION=0.12.42 \
     GEM_HOME=/opt/app-root/src \
     SYSLOG_LISTEN_PORT=10514 \
     RUBYLIB=/opt/app-root/src/amqp_qpid/lib \
@@ -44,20 +44,24 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
         ruby rubygem-qpid_proton ${RUBYVERPKGS} \
     && \
     yum install -y --setopt=tsflags=nodocs --setopt=history_record=yes \
-        gcc-c++ ruby-devel libcurl-devel make cmake swig \
+        gcc-c++ ruby-devel libcurl-devel make cmake swig autoconf automake libtool m4 \
     && \
     gem install -N --conservative --minimal-deps \
-        fluentd:${FLUENTD_VERSION} \
         'activesupport:<5' \
-        fluent-plugin-elasticsearch \
-        'fluent-plugin-systemd:<0.1.0' systemd-journal \
-        fluent-plugin-rewrite-tag-filter \
+        'public_suffix:<3' \
+        'elasticsearch-transport:<5' \
+        'elasticsearch-api:<5' \
+        'elasticsearch:<5' \
+        fluentd:${FLUENTD_VERSION} \
+        'fluent-plugin-elasticsearch:~>1.0' \
+        'fluent-plugin-kubernetes_metadata_filter:1.0.1' \
+        'fluent-plugin-rewrite-tag-filter:<1.6.0' \
         fluent-plugin-parser \
         'fluent-plugin-grok-parser:<0.14' \
-        fluent-plugin-kubernetes_metadata_filter \
         fluent-plugin-secure-forward \
-        fluent-plugin-add \
+        'fluent-plugin-systemd:<0.1.0' \
         fluent-plugin-viaq_data_model \
+        fluent-plugin-add \
         fluent-plugin-collectd-nest \
     && \
     yum -y history undo last \
